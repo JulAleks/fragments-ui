@@ -1,6 +1,7 @@
 // src/app.js
 // console logs will show in browser (Shift + CTRL + J)
 import { Auth, getUser } from './auth';
+import { getUserFragments } from './api';
 
 async function init() {
   // Get our UI elements
@@ -28,6 +29,11 @@ async function init() {
     return;
   }
 
+  // Do an authenticated request to the fragments API server and log the result
+  const userFragments = await getUserFragments(user);
+    // TODO: later in the course, we will show all the user's fragments in the HTML...
+
+
   // Log the user info for debugging purposes
   console.log({ user });
 
@@ -39,6 +45,7 @@ async function init() {
 
   // Disable the Login button
   loginBtn.disabled = true;
+
 }
 
 // Wait for the DOM to be ready, then start the app
