@@ -31,6 +31,9 @@
   },
   "dependencies": {
     "aws-amplify": "^5.0.0",
-    "fragments-ui": "file:"
+    "fragments-ui": "file:",
+    "pino": "^9.4.0",
+    "pino-http": "^10.3.0",
+    "pino-pretty": "^11.2.2"
   }
 }
