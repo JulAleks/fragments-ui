@@ -1,7 +1,7 @@
 // src/app.js
 // console logs will show in browser (Shift + CTRL + J)
 import { Auth, getUser } from './auth';
-import { getUserFragments } from './api';
+import { getUserFragments, createNewFragment } from './api';
 const logger = require('./logger');
 
 async function init() {
@@ -9,7 +9,7 @@ async function init() {
   const userSection = document.querySelector('#user');
   const loginBtn = document.querySelector('#login');
   const logoutBtn = document.querySelector('#logout');
-
+  const createForm = document.getElementById('createForm');
   // Wire up event handlers to deal with login and logout.
   loginBtn.onclick = () => {
     // Sign-in via the Amazon Cognito Hosted UI (requires redirects), see:
@@ -48,6 +48,32 @@ async function init() {
 
     // Logging that user is signed in
     logger.info({ user }, 'User is signed in');
+
+    // Function to submit a new text fragment
+    async function submitTextFragment(user) {
+      const fragmentType = document.getElementById('fragmentType').value;
+      const fragmentContentValue = document.getElementById('fragmentContent').value;
+
+      try {
+        // Submitting the text fragment content directly
+        const res = await createNewFragment(user, fragmentContentValue, fragmentType);
+
+        // Reset the form fields
+        document.getElementById('fragmentType').value = 'text/plain';
+        document.getElementById('fragmentContent').value = '';
+
+        return res; // Return the result if needed
+      } catch (error) {
+        console.error('Failed to create text fragment:', error);
+        alert('Failed to create text fragment. Please try again.');
+      }
+    }
+
+    // Event listener for form submission (only for text fragments)
+    createForm.addEventListener('submit', async (event) => {
+      event.preventDefault(); // Prevent form submission
+      await submitTextFragment(user); // Call the submitTextFragment function
+    });
   } catch (error) {
     logger.error(error, 'Error during initialization');
   }
