@@ -28,11 +28,8 @@ export async function getUserFragments(user) {
   }
 }
 
-/**
- * Create a new fragment
- */
 export async function createNewFragment(user, fragmentContent, contentType) {
-  console.log('Request to create fragment');
+  console.log('Creating a new fragment...');
 
   try {
     const response = await fetch(`${apiUrl}/v1/fragments`, {
