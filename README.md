@@ -102,3 +102,7 @@ Before running this project, ensure you have:
    ```bash
    npm run build
    ```
+
+## Links
+
+- **Back End**: [Fragments Back-End API](https://github.com/JulAleks/fragments)
