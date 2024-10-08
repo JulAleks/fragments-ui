@@ -28,6 +28,9 @@ export async function getUserFragments(user) {
   }
 }
 
+/**
+ * Create New Fragment
+ */
 export async function createNewFragment(user, fragmentContent, contentType) {
   console.log('Creating a new fragment...');
 
