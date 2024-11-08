@@ -1,0 +1,11 @@
+.parcel-cashe
+.vscode/
+dist/
+node_modules/
+.prettier*
+
+.ssh/
+.env
+.git*
+
+
