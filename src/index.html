@@ -2,28 +2,57 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <title>Fragments UI</title>
+    <title>Fragment Library</title>
     <link rel="stylesheet" href="https://unpkg.com/bamboo.css" />
     <link rel="stylesheet" href="./styles.css" />
     <script type="module" src="./app.js"></script>
   </head>
   <body>
-    <h1>Fragments UI</h1>
-    <section>
-      <nav><button id="login">Login</button> <button id="logout">Logout</button></nav>
-    </section>
+
+   <!--header-->
+   
+   <div class="header-container">
+    <img src="../src/img/banner.png" alt="Cool Banner" class="banner-image">
+    <h1>Fragment Library</h1>
+  </div>
+
+  <section>
+    <nav>
+      <button id="login">Login</button>
+      <button id="logout">Logout</button>
+    </nav>
+
+
     <section hidden id="user">
-      <h2>Hello <span class="username"></span>!</h2>
+      <!-- User Section-->
+      <h2 >Hello <span class="username"></span>!</h2>
+      <div id="middle">
+
+        
+      <div id="existing_fragments">
+        <!-- Existing_fragments-->
+        <h3>Those are your Fragments</h3>
+        <div id="fragment_list"></div>
+      </div>
+
+      <!-- Add new fragment -->
+      <div id="form_div">
       <h3>Create A New Fragment:</h3>
-    
       <form id="createForm">
         <label for="fragmentType">Choose Fragment Type:</label>
-       <!-- To add more types in the future -->
+      <!-- TO ALLOW IN NEXT ASSIGNMENTS/LABS-->
         <select id="fragmentType">
           <option value="text/plain">Text</option>
-          <option value="text/plain">Text</option>
-          <option value="text/plain">Text</option>
-          <option value="text/plain">Text</option>
+          <option value="text/markdown">Markdown</option>
+          <option value="text/html">HTML</option>
+          <option value="text/csv">CSV</option>
+          <option value="application/json">JSON</option>
+          <option value="application/yaml">YAML</option>
+          <!-- <option value="image/png">image (png)</option>-->
+         <!-- <option value="image/jpeg">image (jpeg)</option>-->
+        <!--  <option value="image/webp">image (webp)</option>-->
+         <!-- <option value="image/avif">image (avif)</option>-->
+        <!--  <option value="image/gif">image (gif)</option>-->
         </select>
         <br />
         <br />
@@ -32,10 +61,15 @@
           id="fragmentContent"
           placeholder="Write fragment data..."
         ></textarea>
-        <br>
+        <br />
+        <label for="fragment_file">Upload Your File:</label>
+        <input type="file" id="fragment_file" accept="text/*" multiple />
+        <br />
         <button type="submit">Submit</button>
       </form>
-    </section>
-    </section>
+    </div>
+    </section> 
+   </section>
+  </div>
   </body>
 </html>

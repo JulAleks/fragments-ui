@@ -1,4 +1,137 @@
+/* Basic Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Body Styling */
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f0f0f0;
+  color: #333;
+  padding: 20px;
+  text-align: center;
+}
+
+/* Header */
 h1 {
-  color: hotpink;
-  font-family: cursive;
+  font-size: 40px;
+  color: #4a90e2;
+  margin-bottom: 20px;
+}
+
+#user h2 {
+  text-align: center;
+  font-size: 24px;
+  color: #0612b8;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+/* Section Styling */
+section {
+  background-color: #ffffff;
+  padding: 20px;
+  margin: 10px auto;
+  border: 1px solid #ddd;
+  max-width: 600px;
+  text-align: left;
+}
+
+/* Navigation */
+nav {
+  text-align: right;
+  margin-bottom: 10px;
+}
+
+button {
+  background-color: #4a90e2;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+button:hover {
+  background-color: #357ab8;
+}
+
+/* Style for the middle container */
+#middle {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+}
+
+/* Styling for each div inside middle */
+#existing_fragments,
+#form_div {
+  flex: 1;
+  background-color: #f9f9f9;
+  padding: 15px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
+
+/* Form Elements */
+form {
+  margin-top: 15px;
+}
+
+label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+select,
+textarea,
+input[type='file'] {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+}
+
+textarea {
+  height: 100px;
+}
+
+button[type='submit'] {
+  background-color: #28a745;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+button[type='submit']:hover {
+  background-color: #218838;
+}
+
+.fragment-item {
+  border: 1px solid #ddd;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+}
+
+#empty-message {
+  color: #888;
+  font-style: italic;
+  text-align: center;
+  margin-top: 20px;
+}
+
+.banner-image {
+  width: 100%;
+  height: auto;
+  max-width: 600px;
+  border-radius: 8px;
+  margin-bottom: 10px;
 }
