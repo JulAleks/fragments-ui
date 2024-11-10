@@ -8,6 +8,9 @@ const apiUrl = process.env.API_URL || 'http://localhost:8080';
  * fragments microservice (currently only running locally). We expect a user
  * to have an `idToken` attached, so we can send that along with the request.
  */
+/**
+ * Create users fragments
+ */
 export async function getUserFragments(user) {
   console.log('Requesting user fragments data...');
   try {
@@ -31,29 +34,57 @@ export async function getUserFragments(user) {
 /**
  * Create New Fragment
  */
-export async function createNewFragment(user, fragmentContent, contentType) {
-  console.log('Creating a new fragment...');
+export async function createNewFragment(content, type, user) {
+  console.log('Creating fragment:', { content, type });
+  console.log('User object:', user);
+
+  if (!user || !user.idToken) {
+    throw new Error('No authenticated user or missing token');
+  }
 
   try {
-    const response = await fetch(`${apiUrl}/v1/fragments`, {
+    const headers = {
+      'Content-Type': type,
+      Authorization: `Bearer ${user.idToken}`,
+    };
+    console.log('Request headers:', headers);
+
+    const res = await fetch(`${apiUrl}/v1/fragments`, {
       method: 'POST',
-      headers: {
-        Authorization: user.authorizationHeaders().Authorization,
-        'Content-Type': contentType,
-      },
-      body: fragmentContent,
+      headers,
+      body: content,
     });
 
-    if (!response.ok) {
-      throw new Error('Failed to create a new fragment.');
+    if (!res.ok) {
+      throw new Error(`${res.status} ${res.statusText}`);
     }
 
-    const responseData = await response.json();
-    console.log('Successfully created new fragment:', responseData);
+    const data = await res.json();
+    console.log('Fragment created successfully:', data);
+    return data;
+  } catch (err) {
+    console.error('Error creating fragment:', err);
+    throw err;
+  }
+}
+export async function getFragmentsExpanded(user) {
+  console.log('Getting expanded fragments list');
+  try {
+    const res = await fetch(`${apiUrl}/v1/fragments?expand=1`, {
+      headers: {
+        Authorization: `Bearer ${user.idToken}`,
+      },
+    });
 
-    return responseData;
-  } catch (error) {
-    console.error('Error creating new fragment:', error.message);
-    throw error;
+    if (!res.ok) {
+      throw new Error(`${res.status} ${res.statusText}`);
+    }
+
+    const data = await res.json();
+    console.log('Got expanded fragments:', data);
+    return data;
+  } catch (err) {
+    console.error('Error getting expanded fragments:', err);
+    throw err;
   }
 }

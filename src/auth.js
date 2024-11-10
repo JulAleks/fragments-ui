@@ -29,7 +29,7 @@ Amplify.configure({
       // NOTE: these must match what you have specified in the Hosted UI
       // app settings for Callback and Redirect URLs (e.g., no trailing slash).
       redirectSignIn: process.env.OAUTH_SIGN_IN_REDIRECT_URL,
-      redirectSignOut: process.env.OAUTH_SIGN_OUT_REDIRECT_URL,   
+      redirectSignOut: process.env.OAUTH_SIGN_OUT_REDIRECT_URL,
 
       // We're using the Access Code Grant flow (i.e., `code`)
       responseType: 'code',
@@ -47,6 +47,11 @@ async function getUser() {
     // https://docs.amplify.aws/lib/auth/advanced/q/platform/js/#identity-pool-federation
     const currentAuthenticatedUser = await Auth.currentAuthenticatedUser();
 
+    if (!currentAuthenticatedUser) {
+      console.log('No user found');
+      return;
+    }
+
     // Get the user's username
     const username = currentAuthenticatedUser.username;
 
@@ -56,8 +61,17 @@ async function getUser() {
     // Get the user's Identity Token, which we'll use later with our
     // microservice. See discussion of various tokens:
     // https://docs.aws.amazon.com/cognito/latest/developerguide/amazon-cognito-user-pools-using-tokens-with-identity-providers.html
-    const idToken = currentAuthenticatedUser.signInUserSession.idToken.jwtToken;
+    const idToken = currentAuthenticatedUser.signInUserSession?.idToken?.jwtToken;
     const accessToken = currentAuthenticatedUser.signInUserSession.accessToken.jwtToken;
+
+    const user = {
+      username: currentAuthenticatedUser.username,
+      authorizationHeaders: (type = 'text/plain') => ({
+        'Content-Type': type,
+      }),
+    };
+
+    console.log('Returning user:', user);
 
     // Return a simplified "user" object
     return {

@@ -35,7 +35,7 @@ section {
   padding: 20px;
   margin: 10px auto;
   border: 1px solid #ddd;
-  max-width: 600px;
+  max-width: 900px; /* Increased width for side-by-side layout */
   text-align: left;
 }
 
@@ -61,14 +61,14 @@ button:hover {
 /* Style for the middle container */
 #middle {
   display: flex;
-  gap: 20px;
-  align-items: flex-start;
+  gap: 20px; /* Space between the two sections */
+  align-items: flex-start; /* Align items to the top */
 }
 
-/* Styling for each div inside middle */
+/* Styling for each div inside #middle */
 #existing_fragments,
 #form_div {
-  flex: 1;
+  flex: 1; /* Make both sections take equal space */
   background-color: #f9f9f9;
   padding: 15px;
   border: 1px solid #ddd;
@@ -113,6 +113,7 @@ button[type='submit']:hover {
   background-color: #218838;
 }
 
+/* Styling for fragment items */
 .fragment-item {
   border: 1px solid #ddd;
   padding: 10px;
@@ -128,10 +129,23 @@ button[type='submit']:hover {
   margin-top: 20px;
 }
 
+/* Banner Image Styling */
 .banner-image {
   width: 100%;
   height: auto;
   max-width: 600px;
   border-radius: 8px;
   margin-bottom: 10px;
+}
+
+.fragment-list {
+  margin-bottom: 20px;
+}
+
+#refresh-fragments {
+  margin-top: 10px;
+}
+
+#fragments-container {
+  margin-top: 20px;
 }
