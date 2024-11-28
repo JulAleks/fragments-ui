@@ -2,7 +2,7 @@ import { Auth, getUser } from './auth';
 import { createNewFragment, getFragmentsExpanded } from './api';
 
 async function init() {
-  // Get our UI elements
+  // Get our UI elements with safe checks
   const userSection = document.querySelector('#user');
   const loginBtn = document.querySelector('#login');
   const logoutBtn = document.querySelector('#logout');
@@ -13,6 +13,12 @@ async function init() {
   const fileNameDisplay = document.getElementById('fileNameDisplay');
   const refreshButton = document.querySelector('#refresh-fragments');
 
+  // Ensure all critical elements exist
+  if (!loginBtn || !logoutBtn) {
+    console.error('Login or logout button missing from DOM.');
+    return;
+  }
+
   // Wire up event handlers to deal with login and logout.
   loginBtn.onclick = () => Auth.federatedSignIn();
   logoutBtn.onclick = () => Auth.signOut();
@@ -21,14 +27,19 @@ async function init() {
   const user = await getUser();
   if (!user) {
     console.log('No user is authenticated');
-    logoutBtn.disabled = true;
+    if (logoutBtn) logoutBtn.disabled = true;
     return;
   }
 
   // Update the UI to welcome the user
-  userSection.hidden = false;
-  userSection.querySelector('.username').innerText = user.username;
-  loginBtn.disabled = true;
+  if (userSection) {
+    userSection.hidden = false;
+    const usernameElem = userSection.querySelector('.username');
+    if (usernameElem) {
+      usernameElem.innerText = user.username;
+    }
+  }
+  if (loginBtn) loginBtn.disabled = true;
 
   // Function to update the fragments list
   async function updateFragmentsList() {
@@ -37,6 +48,11 @@ async function init() {
 
     try {
       const fragmentsList = document.querySelector('#fragments-container');
+      if (!fragmentsList) {
+        console.error('Fragments container is missing in the DOM.');
+        return;
+      }
+
       const { fragments } = await getFragmentsExpanded(user);
 
       fragmentsList.innerHTML = fragments
@@ -54,84 +70,90 @@ async function init() {
         .join('');
     } catch (err) {
       console.error('Unable to update fragments list:', err);
-      document.querySelector('#fragments-container').innerHTML =
-        '<div class="error">Error loading fragments</div>';
+      const fragmentsList = document.querySelector('#fragments-container');
+      if (fragmentsList) {
+        fragmentsList.innerHTML = '<div class="error">Error loading fragments</div>';
+      }
     }
   }
 
   // Add refresh button handler
-  refreshButton?.addEventListener('click', updateFragmentsList);
+  if (refreshButton) {
+    refreshButton.addEventListener('click', updateFragmentsList);
+  }
 
   // Initial load of fragments
   await updateFragmentsList();
 
   // Form submission handler
-  createForm?.addEventListener('submit', async (event) => {
-    event.preventDefault();
+  if (createForm) {
+    createForm.addEventListener('submit', async (event) => {
+      event.preventDefault();
 
-    const currentUser = await getUser();
-    console.log('Current user at form submission:', currentUser);
+      const currentUser = await getUser();
+      console.log('Current user at form submission:', currentUser);
 
-    if (!currentUser) {
-      console.error('No user authenticated');
-      return;
-    }
+      if (!currentUser) {
+        console.error('No user authenticated');
+        return;
+      }
 
-    try {
-      const type = fragmentTypeSelect.value;
-      const content = fragmentContentTextarea.value;
-      console.log('Creating fragment:', { type, content });
+      try {
+        const type = fragmentTypeSelect?.value || 'text/plain';
+        const content = fragmentContentTextarea?.value || '';
+        console.log('Creating fragment:', { type, content });
 
-      const result = await createNewFragment(content, type, currentUser);
-      console.log('Fragment created:', result);
+        const result = await createNewFragment(content, type, currentUser);
+        console.log('Fragment created:', result);
 
-      // Clear form and refresh the list
-      createForm.reset();
-      await updateFragmentsList();
-    } catch (err) {
-      console.error('Unable to create fragment:', err);
-    }
-  });
+        // Clear form and refresh the list
+        if (createForm) createForm.reset();
+        await updateFragmentsList();
+      } catch (err) {
+        console.error('Unable to create fragment:', err);
+      }
+    });
+  }
 
   // File input handler
-  fileInput.addEventListener('change', handleFileLoad);
+  if (fileInput && fileNameDisplay && fragmentContentTextarea && fragmentTypeSelect) {
+    fileInput.addEventListener('change', (event) => {
+      const file = event.target.files[0];
+      if (!file) return;
 
-  function handleFileLoad(event) {
-    const file = event.target.files[0];
-    if (!file) return;
+      // Display file name
+      fileNameDisplay.textContent = `Selected file: ${file.name}`;
 
-    // Display file name
-    fileNameDisplay.textContent = `Selected file: ${file.name}`;
-
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      try {
-        const selectedType = fragmentTypeSelect.value;
-        if (selectedType === 'application/json') {
-          // Parse JSON files
-          fragmentContentTextarea.value = JSON.stringify(JSON.parse(e.target.result), null, 2);
-        } else {
-          // Load text for other types
-          fragmentContentTextarea.value = e.target.result;
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        try {
+          const selectedType = fragmentTypeSelect.value;
+          if (selectedType === 'application/json') {
+            // Parse JSON files
+            fragmentContentTextarea.value = JSON.stringify(JSON.parse(e.target.result), null, 2);
+          } else {
+            // Load text for other types
+            fragmentContentTextarea.value = e.target.result;
+          }
+          console.log('Loaded file content:', fragmentContentTextarea.value);
+        } catch (error) {
+          console.error('Error reading file:', error);
+          alert('Error loading file content. Ensure the format matches the selected type.');
+          fragmentContentTextarea.value = ''; // Clear content on error
         }
-        console.log('Loaded file content:', fragmentContentTextarea.value);
-      } catch (error) {
-        console.error('Error reading file:', error);
-        alert('Error loading file content. Ensure the format matches the selected type.');
-        fragmentContentTextarea.value = ''; // Clear content on error
-      }
-    };
+      };
 
-    // Read file based on type selection
-    if (
-      fragmentTypeSelect.value === 'application/json' ||
-      fragmentTypeSelect.value.startsWith('text/')
-    ) {
-      reader.readAsText(file); // Read as text for JSON and other text-based files
-    } else {
-      alert('Unsupported file type. Please select a compatible type.');
-      fragmentContentTextarea.value = ''; // Clear content for unsupported types
-    }
+      // Read file based on type selection
+      if (
+        fragmentTypeSelect.value === 'application/json' ||
+        fragmentTypeSelect.value.startsWith('text/')
+      ) {
+        reader.readAsText(file); // Read as text for JSON and other text-based files
+      } else {
+        alert('Unsupported file type. Please select a compatible type.');
+        fragmentContentTextarea.value = ''; // Clear content for unsupported types
+      }
+    });
   }
 }
 
