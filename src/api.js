@@ -67,6 +67,11 @@ export async function createNewFragment(content, type, user) {
     throw err;
   }
 }
+
+/**
+ * Get expanded fragments
+ */
+
 export async function getFragmentsExpanded(user) {
   console.log('Getting expanded fragments list');
   try {
@@ -86,5 +91,155 @@ export async function getFragmentsExpanded(user) {
   } catch (err) {
     console.error('Error getting expanded fragments:', err);
     throw err;
+  }
+}
+
+/**
+ * GET /v1/fragments/:id
+ */
+export async function fetchFragmentById(user, fragmentId) {
+  console.log('Fetching user fragment by id');
+
+  try {
+    const res = await fetch(`${apiUrl}/v1/fragments/${fragmentId}`, {
+      method: 'GET',
+      headers: user.authorizationHeaders(),
+    });
+
+    if (!res.ok) {
+      console.error('Error fatching fragment');
+      throw await res.json();
+    }
+
+    let data;
+    const fragmentType = res.headers.get('Content-Type');
+
+    if (fragmentType.startsWith('text/')) {
+      data = await res.text();
+    } else if (fragmentType.startsWith('application/')) {
+      data = await res.json();
+    } else if (fragmentType.startsWith('image/')) {
+      const blob = await res.blob();
+      data = URL.createObjectURL(blob);
+    }
+
+    console.log('Success in retrieving fragment data: ', { data });
+
+    return { data, fragmentType };
+  } catch (err) {
+    console.error('Error fetching user fragment by id:', err);
+  }
+}
+
+/**
+ * DELETE /v1/fragments/:id
+ */
+export async function deleteFragmentById(user, id) {
+  console.log('Attempting to delete fragment by ID:', id);
+
+  try {
+    const res = await fetch(`${apiUrl}/v1/fragments/${id}`, {
+      method: 'DELETE',
+      headers: user.authorizationHeaders(),
+    });
+
+    if (!res.ok) {
+      console.error('Error fatching fragment to delete');
+      throw await res.json();
+    }
+
+    const data = await res.json();
+    console.log('Fragment deleted successfully:', { data });
+    return data;
+  } catch (err) {
+    console.error('Error deleting fragment by ID:', err);
+    throw err;
+  }
+}
+
+/**
+ * PUT /v1/fragments/:id
+ */
+
+export async function updateFragmentById(user, content, fragmentId, fragmentType) {
+  console.log('Updating fragment by ID:', { fragmentId, fragmentType, content });
+  try {
+    const headers = user.authorizationHeaders();
+    headers['Content-Type'] = fragmentType.includes('charset')
+      ? fragmentType.split(';')[0]
+      : fragmentType;
+
+    const response = await fetch(`${apiUrl}/v1/fragments/${fragmentId}`, {
+      method: 'PUT',
+      headers,
+      body: content,
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      console.error('Update failed:', error);
+      throw new Error(error.message || 'Unknown error occurred');
+    }
+
+    const data = await response.json();
+    console.log('Fragment updated successfully:', data);
+    return data;
+  } catch (err) {
+    console.error('Error updating fragment:', err);
+    throw err;
+  }
+}
+
+/**
+ * Fetch converted fragment by id and extension
+ */
+export async function fetchConvertedFragmentById(user, fragmentId, extension) {
+  const extensionToContentTypeMap = {
+    txt: 'text/plain',
+    md: 'text/markdown',
+    csv: 'text/csv',
+    html: 'text/html',
+    json: 'application/json',
+    yaml: 'application/yaml',
+    png: 'image/png',
+    jpg: 'image/jpeg',
+    webp: 'image/webp',
+    gif: 'image/gif',
+    avif: 'image/avif',
+  };
+
+  const extensionType = extensionToContentTypeMap[extension];
+  if (!extensionType) {
+    throw new Error(`Unsupported extension: ${extension}`);
+  }
+
+  console.log(`Fetching from URL: ${apiUrl}/v1/fragments/${fragmentId}.${extension}`);
+
+  try {
+    const response = await fetch(`${apiUrl}/v1/fragments/${fragmentId}.${extension}`, {
+      method: 'GET',
+      headers: {
+        Authorization: user.authorizationHeaders().Authorization,
+        Accept: extensionType,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+
+    let data;
+    if (extensionType.startsWith('image/')) {
+      const blob = await response.blob();
+      data = URL.createObjectURL(blob);
+    } else if (extensionType === 'application/json') {
+      data = await response.json();
+    } else {
+      data = await response.text();
+    }
+
+    return { data };
+  } catch (error) {
+    throw new Error(`Error retrieving converted fragment: ${error.message}`);
   }
 }

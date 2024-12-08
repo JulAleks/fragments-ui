@@ -30,16 +30,19 @@
                 <option value="text/plain">Plain Text</option>
                 <option value="text/markdown">Markdown</option>
                 <option value="text/html">HTML</option>
+                <option value="application/yaml">YMAL</option>
                 <option value="application/json">JSON</option>
+                <option value="image/png">PNG</option>
+                <option value="image/jpeg">JPEG</option>
+                <option value="image/webp">WebP</option>
+                <option value="image/gif">GIF</option>
+                <option value="image/avif">AVIF</option>
               </select>
             </div>
             <div>
               <label for="fragment-content">Add Your Fragment:</label>
-              <textarea
-                id="fragment-content"
-                required
-                placeholder="Write fragment data..."
-              ></textarea>
+              <textarea id="fragment-content" placeholder="Write fragment data..."></textarea>
+
               <br />
               <!-- File Input for Loading Content -->
               <label for="fragment_file">Upload Your File:</label>
@@ -60,5 +63,36 @@
         </div>
       </div>
     </section>
+
+    <!-- Display Fragments -->
+     <div class="display">
+    <section>
+      <div id="view_fragments">
+        <h3>Manage Fragments</h3>
+
+        <!-- Dropdown and Buttons -->
+        <div class="view-controls">
+          <!-- Dropdown to select fragment -->
+          <select id="fragmentSelect">
+            <option value="" disabled selected>Select a fragment</option>
+          </select>
+
+          <!-- Buttons -->
+          <div class="button-group">
+            <button id="viewFragmentBtn">View Fragment</button>
+            <button id="editFragmentBtn">Edit Fragment</button>
+            <button id="convertFragmentBtn">Convert Fragment</button>
+            <button id="deleteFragmentBtn">Delete Fragment</button>
+          </div>
+        </div>
+        <!-- Area for modifying fragment content -->
+        <div id="edit-convert-container" class="edit-convert-container">
+          <!-- Content will be dynamically injected here -->
+        </div>
+        <!-- Area to display fragment content -->
+        <div id="fragment-display" class="fragment-display"></div>
+      </div>
+    </section>
+  </div></div>
   </body>
 </html>
