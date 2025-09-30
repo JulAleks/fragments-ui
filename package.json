@@ -32,7 +32,7 @@
   },
   "dependencies": {
     "aws-amplify": "^5.0.0",
-    "compression": "^1.7.4",
+    "compression": "^1.8.1",
     "fragments-ui": "file:",
     "js-yaml": "^4.1.0",
     "pino": "^9.4.0",
