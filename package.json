@@ -31,7 +31,7 @@
     "querystring-es3": "^0.2.1"
   },
   "dependencies": {
-    "aws-amplify": "^5.0.0",
+    "aws-amplify": "^5.3.27",
     "compression": "^1.8.1",
     "fragments-ui": "file:",
     "js-yaml": "^4.1.0",
